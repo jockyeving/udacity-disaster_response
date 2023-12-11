@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    # load necessary datasets, merge
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     df = messages.merge(categories, on='id')
@@ -12,7 +13,7 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
-    # create a dataframe of the 36 individual category columns
+    # spliting 'categories' column into 36 individual variables
     categories = pd.DataFrame(df.categories.str.split(';'))
     names = []
     row = categories.iloc[0][0]
@@ -21,20 +22,23 @@ def clean_data(df):
     categories[names] = categories.categories.apply(lambda x: pd.Series(str(x).split(",")))
     categories.drop('categories',axis=1,inplace=True)
     
+    # obtaining the needed '0' or '1' digit from each string
     for column in categories:
         if column == 'direct_report':
             categories[column] = categories[column].apply(lambda x: str(x)[-3:-2])
         else:
             categories[column] = categories[column].apply(lambda x: str(x)[-2:-1])
-    
     df.drop('categories',axis=1,inplace=True)
     df = pd.concat([df,categories],axis=1)
+    
+    # drop duplicate entries
     df.drop_duplicates(inplace=True)
     df = df.reset_index().drop('index',axis=1)
     return df
 
 
 def save_data(df, database_filename):
+    # saving the processed dataframe into a SQL database
     engine = create_engine('sqlite:///' + database_filename)
     df.to_sql('DisasterResponse', engine, index=False)
 
