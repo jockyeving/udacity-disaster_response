@@ -83,8 +83,8 @@ def build_model():
     # defining parameters for GridSearch
     parameters ={
         'clf__estimator__n_estimators': [i for i in range(50, 200, 50)],
-        'clf__estimator__max_depth': [10, 20],
-        'clf__estimator__max_features': ['auto']
+        'clf__estimator__max_depth': [2, 5, 10],
+        'clf__estimator__max_features': ['sqrt', 'log2']
     }
     
     cv = GridSearchCV(pipeline, param_grid=parameters)
