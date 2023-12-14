@@ -5,6 +5,19 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    """
+    Loads and merges data.
+    
+    Loads the individual dataframes, and merges them.
+ 
+    Args:
+        messages_filepath (str): Path and name of the 'messages' dataset.
+        categories_filepath (str): Path and name of the 'categories' dataset.
+    
+    Returns:
+        df (pd.DataFrame): Dataframe consisting of the two datasets merged into eachother.
+    """
+    
     # load necessary datasets, merge
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
@@ -13,6 +26,17 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    """
+    Cleans the raw dataset
+    
+    Cleaning the dataset by splitting the 'categories' column into 36 individual values, referring to the categories the classification's         output values; then removing duplicates in the dataframe.
+ 
+    Args:
+        df (pd.DataFrame): Dataframe consisting of the two datasets merged, unprocessed.
+    
+    Returns:
+        df (pd.DataFrame): The cleaned dataframe.
+    """
     # spliting 'categories' column into 36 individual variables
     categories = pd.DataFrame(df.categories.str.split(';'))
     names = []
@@ -38,9 +62,18 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    """
+    Save to df to SQL.
+    
+    Saves the processed and cleaned database (df) into SQL.
+ 
+    Args:
+        df (pd.DataFrame): The dataframe to be saved into SQL.
+        database_filename (str): Desired path and name of the SQL database.
+    """
     # saving the processed dataframe into a SQL database
     engine = create_engine('sqlite:///' + database_filename)
-    df.to_sql('DisasterResponse', engine, index=False)
+    df.to_sql('DisasterResponse', engine, index=False, if_exists='replace')
 
 
 def main():

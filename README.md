@@ -1,5 +1,5 @@
 # Disaster Response Pipeline Project
-
+The repositorcy can be reached at https://github.com/jockyeving/udacity-disaster_response
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
 

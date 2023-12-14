@@ -25,6 +25,19 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 def load_data(database_filepath):
+    """
+    Fethes data from the database.
+    
+    Fetches data from the SQL database, and splits it into X and Y dataframes.
+ 
+    Args:
+        messages_filepath (str): Path and name of the 'messages' dataset.
+        categories_filepath (str): Path and name of the 'categories' dataset.
+    
+    Returns:
+        df (pd.DataFrame): Dataframe consisting of the two datasets merged into eachother.
+    """
+    
     # fetching data from SQL
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('DisasterResponse',engine)
@@ -35,6 +48,15 @@ def load_data(database_filepath):
     return X, Y, category_names
 
 def tokenize(text):
+    """
+    Tokenizes input text.
+ 
+    Args:
+        text (str): Input message string
+    
+    Returns:
+        clean_tokens (str): Tokenized form of the input message string.
+    """
     # function to tokenize given message string
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -46,6 +68,12 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Creates a machine learning pipeline, and builds it using grid search.
+    
+    Returns:
+        cv (GridSearchCV): Returns the model optimized by GridSearchCV
+    """
     # defining the ML pipeline
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
@@ -65,6 +93,17 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+     """
+    Evaluates the trained model.
+    
+    Takes the trained model and the test datasets as inputs, and calculates the F1-, precision-, and recall-scores of each individual             category, and prints these values out.
+ 
+    Args:
+        model (GridSearchCV): The trained model.
+        X_test (GridSearchCV): Dataset used for prediction.
+        Y_test (GridSearchCV): Dataset used to check the accuracy of the prediction.
+        category_names (list): list of category names in Y_test
+    """
     #function to print out F1-score, Precision, and Recall
     Y_pred = model.predict(X_test)
     f1_array=[]
